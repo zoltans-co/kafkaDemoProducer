@@ -1,8 +1,6 @@
-package co.zoltans.kafka.demo.kafkademo.config;
+package co.zoltans.kafka.demo.kafkademoproducer.config;
 
-import co.zoltans.kafka.demo.kafkademo.KafkaMessage;
-import java.util.HashMap;
-import java.util.Map;
+import co.zoltans.kafka.demo.kafkademoproducer.message.PublicationMessage;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +13,9 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class KafkaConsumerConfig {
@@ -34,21 +35,22 @@ public class KafkaConsumerConfig {
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
     return props;
   }
-
+  
   @Bean
-  public ConsumerFactory<String, KafkaMessage> consumerFactory() {
-    JsonDeserializer<KafkaMessage> jsonDeserializer = new JsonDeserializer<>();
+  public ConsumerFactory<String, PublicationMessage> consumerFactory() {
+    JsonDeserializer<PublicationMessage> jsonDeserializer = new JsonDeserializer<>();
     jsonDeserializer.addTrustedPackages("*");
     return new DefaultKafkaConsumerFactory<>(
         consumerConfigs(), new StringDeserializer(), jsonDeserializer);
   }
 
   @Bean
-  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, KafkaMessage>> factory(
-      ConsumerFactory<String, KafkaMessage> consumerFactory) {
-    ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> factory =
+  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, PublicationMessage>> factory(
+      ConsumerFactory<String, PublicationMessage> consumerFactory) {
+    ConcurrentKafkaListenerContainerFactory<String, PublicationMessage> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory);
     return factory;
   }
+
 }
